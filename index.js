@@ -1,7 +1,10 @@
 const express = require('express');
 const app = express();
 const port=3000;
+const os=require('os');
 app.use(express.json());
+app.use(middleware);
+app.use(logger);
 
 app.listen(3000, () => {
     console.log('Server is running on port 3000');
@@ -33,6 +36,18 @@ app.put('/courses/:id', (req, res) => {
 
 
 });
+
+function middleware(req,res,next){
+    console.log('Middleware function');
+    next();
+}
+function logger(req,res,next){
+    const ip=req.ip || req.connection.remoteAddress;
+    const hostname=os.hostname();
+    const date = new Date().toISOString();
+    console.log(`[${date}] Request from IP: ${ip}, Hostname: ${hostname}`);
+    next();
+}
 app.delete('/courses/:id', (req, res) => {
     const userId=parseInt(req.params.id);
     const course=courses.find(c=>c.id===userId);
